@@ -1,0 +1,622 @@
+index.html
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101018">
+<title>VibeChat</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #101018;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  height: 65px;
+  background: #171721;
+  border-bottom: 1px solid #30303d;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7%;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-size: 27px;
+  font-weight: bold;
+  color: #b66cff;
+}
+
+header input {
+  background: #252532;
+  border: 1px solid #393947;
+  padding: 11px 16px;
+  border-radius: 10px;
+  color: white;
+  width: 240px;
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  color: white;
+  font-size: 15px;
+}
+
+.create-btn {
+  background: linear-gradient(120deg, #8c4dff, #d34bdb);
+  padding: 11px 17px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.layout {
+  max-width: 1150px;
+  margin: 25px auto;
+  padding: 0 15px;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 620px) 230px;
+  gap: 25px;
+}
+
+.sidebar, .rightbar {
+  background: #171721;
+  border: 1px solid #30303d;
+  border-radius: 15px;
+  padding: 20px;
+  height: fit-content;
+  position: sticky;
+  top: 85px;
+}
+
+.sidebar a {
+  display: block;
+  padding: 15px 8px;
+  color: #eee;
+  text-decoration: none;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.sidebar a:hover {
+  background: #29293a;
+  color: #c58aff;
+}
+
+.stories {
+  display: flex;
+  gap: 17px;
+  overflow-x: auto;
+  padding: 17px;
+  background: #171721;
+  border: 1px solid #30303d;
+  border-radius: 15px;
+  margin-bottom: 22px;
+}
+
+.story {
+  text-align: center;
+  min-width: 65px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #ddd;
+}
+
+.story img {
+  width: 59px;
+  height: 59px;
+  border-radius: 50%;
+  border: 3px solid #b45cff;
+  object-fit: cover;
+  padding: 2px;
+  margin-bottom: 6px;
+}
+
+.post {
+  background: #171721;
+  border: 1px solid #30303d;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.post-head {
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.username {
+  font-weight: bold;
+}
+
+.post-image {
+  width: 100%;
+  max-height: 550px;
+  object-fit: cover;
+  display: block;
+  background: #222230;
+}
+
+.post-actions {
+  padding: 14px;
+  display: flex;
+  gap: 17px;
+}
+
+.action {
+  background: transparent;
+  font-size: 24px;
+}
+
+.action:hover {
+  transform: scale(1.1);
+}
+
+.post-info {
+  padding: 0 14px 15px;
+  color: #ddd;
+  line-height: 1.6;
+}
+
+.post-info strong {
+  color: white;
+}
+
+.comment-list {
+  margin-top: 7px;
+  font-size: 14px;
+  color: #c9c9d4;
+}
+
+.comment-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-top: 1px solid #333340;
+  color: white;
+  padding: 15px;
+  outline: none;
+}
+
+.rightbar h3 {
+  margin-bottom: 15px;
+}
+
+.rightbar p {
+  color: #aaa;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.profile img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #777;
+  font-size: 13px;
+}
+
+/* Вікно створення публікації */
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #000b;
+  z-index: 20;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+}
+
+.modal-content {
+  background: #20202c;
+  border: 1px solid #444456;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  padding: 23px;
+}
+
+.modal-content h2 {
+  margin-bottom: 18px;
+}
+
+.modal-content input,
+.modal-content textarea {
+  display: block;
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 12px;
+  border-radius: 9px;
+  border: 1px solid #414153;
+  background: #151520;
+  color: white;
+}
+
+.modal-content textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.modal-content button {
+  background: #9b55f5;
+  padding: 12px 18px;
+  border-radius: 9px;
+}
+
+.close {
+  float: right;
+  background: transparent !important;
+  font-size: 23px;
+  padding: 0 !important;
+}
+
+@media(max-width: 850px) {
+  .layout {
+    grid-template-columns: 1fr;
+    max-width: 650px;
+  }
+
+  .sidebar, .rightbar {
+    display: none;
+  }
+
+  header {
+    padding: 0 14px;
+  }
+
+  header input {
+    width: 125px;
+  }
+}
+
+@media(max-width: 390px) {
+  .logo { font-size: 21px; }
+  header input { width: 95px; }
+  .create-btn { padding: 9px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">VibeChat ✨</div>
+  <input id="search" type="search" placeholder="🔍 Пошук..." oninput="searchPosts()">
+  <button class="create-btn" onclick="openModal()">＋ Створити</button>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <a href="#" onclick="showHome()">🏠 Головна</a>
+    <a href="#stories">⭕ Історії</a>
+    <a href="#feed">📰 Публікації</a>
+    <a href="#" onclick="openModal()">➕ Створити пост</a>
+    <a href="#" onclick="showProfile()">👤 Мій профіль</a>
+  </aside>
+
+  <main>
+    <div class="stories" id="stories">
+      <div class="story" onclick="alert('Це твої історії!')">
+        <img src="https://i.pravatar.cc/100?img=47">
+        <span>Твоя історія</span>
+      </div>
+      <div class="story">
+        <img src="https://i.pravatar.cc/100?img=12">
+        <span>Anna</span>
+      </div>
+      <div class="story">
+        <img src="https://i.pravatar.cc/100?img=33">
+        <span>Max</span>
+      </div>
+      <div class="story">
+        <img src="https://i.pravatar.cc/100?img=44">
+        <span>Sofia</span>
+      </div>
+      <div class="story">
+        <img src="https://i.pravatar.cc/100?img=15">
+        <span>Alex</span>
+      </div>
+      <div class="story">
+        <img src="https://i.pravatar.cc/100?img=25">
+        <span>Maria</span>
+      </div>
+    </div>
+
+    <section id="feed"></section>
+  </main>
+
+  <aside class="rightbar">
+    <h3>Твій профіль</h3>
+    <div class="profile">
+      <img src="https://i.pravatar.cc/100?img=47">
+      <div>
+        <strong>vibechat_user</strong>
+        <p>Радий тебе бачити!</p>
+      </div>
+    </div>
+    <hr style="border-color:#333;margin:18px 0">
+    <h3>Про VibeChat</h3>
+    <p>Твій простір для друзів, фотографій, спілкування та гарного настрою 💜</p>
+    <p>Ділись моментами свого життя!</p>
+  </aside>
+
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <button class="close" onclick="closeModal()">×</button>
+    <h2>Створити публікацію</h2>
+    <input id="postUser" placeholder="Твоє ім'я" maxlength="30">
+    <input id="postImage" type="file" accept="image/*">
+    <textarea id="postText" placeholder="Про що хочеш розповісти?"></textarea>
+    <button onclick="createPost()">Опублікувати 🚀</button>
+  </div>
+</div>
+
+<footer>
+  © 2026 VibeChat — Спілкуйся. Ділись. Надихайся. 💜
+</footer>
+
+<script>
+const defaultPosts = [
+  {
+    id: 1,
+    user: "Anna",
+    avatar: "https://i.pravatar.cc/100?img=12",
+    image: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=900",
+    text: "Який чудовий день! 🌅💜",
+    likes: 24,
+    liked: false,
+    comments: []
+  },
+  {
+    id: 2,
+    user: "Max",
+    avatar: "https://i.pravatar.cc/100?img=33",
+    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900",
+    text: "Люблю подорожувати та відкривати нові місця! 🌍",
+    likes: 18,
+    liked: false,
+    comments: []
+  },
+  {
+    id: 3,
+    user: "Sofia",
+    avatar: "https://i.pravatar.cc/100?img=44",
+    image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=900",
+    text: "Трохи краси у твою стрічку 🌸",
+    likes: 35,
+    liked: false,
+    comments: []
+  }
+];
+
+let posts = JSON.parse(localStorage.getItem("vibechat_posts") || "null") || defaultPosts;
+
+function savePosts() {
+  try {
+    localStorage.setItem("vibechat_posts", JSON.stringify(posts));
+  } catch (error) {
+    alert("Не вистачає місця для збереження. Спробуй додати менше або менші фотографії.");
+  }
+}
+
+function renderPosts(list = posts) {
+  const feed = document.getElementById("feed");
+  feed.innerHTML = "";
+
+  if (list.length === 0) {
+    feed.innerHTML = "<p style='text-align:center;padding:30px;color:#aaa'>Публікацій не знайдено 🔍</p>";
+    return;
+  }
+
+  list.forEach(post => {
+    const article = document.createElement("article");
+    article.className = "post";
+
+    const head = document.createElement("div");
+    head.className = "post-head";
+
+    const avatar = document.createElement("img");
+    avatar.className = "avatar";
+    avatar.src = post.avatar;
+
+    const name = document.createElement("span");
+    name.className = "username";
+    name.textContent = post.user;
+
+    head.append(avatar, name);
+
+    const picture = document.createElement("img");
+    picture.className = "post-image";
+    picture.src = post.image;
+    picture.alt = "Фото публікації";
+    picture.loading = "lazy";
+
+    const actions = document.createElement("div");
+    actions.className = "post-actions";
+
+    const like = document.createElement("button");
+    like.className = "action";
+    like.textContent = post.liked ? "❤️" : "🤍";
+    like.title = "Поставити лайк";
+    like.onclick = () => toggleLike(post.id);
+
+    const comment = document.createElement("button");
+    comment.className = "action";
+    comment.textContent = "💬";
+    comment.title = "Додати коментар";
+    comment.onclick = () => addComment(post.id);
+
+    actions.append(like, comment);
+
+    const info = document.createElement("div");
+    info.className = "post-info";
+
+    const count = document.createElement("strong");
+    count.textContent = post.likes + " вподобань";
+
+    const description = document.createElement("p");
+    const boldName = document.createElement("strong");
+    boldName.textContent = post.user + " ";
+    description.append(boldName, document.createTextNode(post.text));
+
+    const comments = document.createElement("div");
+    comments.className = "comment-list";
+
+    (post.comments || []).forEach(item => {
+      const line = document.createElement("p");
+      line.textContent = item;
+      comments.appendChild(line);
+    });
+
+    info.append(count, description, comments);
+
+    article.append(head, picture, actions, info);
+    feed.appendChild(article);
+  });
+}
+
+function toggleLike(id) {
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+
+  post.liked = !post.liked;
+  post.likes += post.liked ? 1 : -1;
+  savePosts();
+  renderPosts();
+}
+
+function addComment(id) {
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+
+  const text = prompt("Напиши свій коментар:");
+  if (!text || !text.trim()) return;
+
+  post.comments = post.comments || [];
+  post.comments.push("Ти: " + text.trim());
+  savePosts();
+  renderPosts();
+}
+
+function openModal() {
+  document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
+
+function createPost() {
+  const user = document.getElementById("postUser").value.trim() || "VibeChat User";
+  const text = document.getElementById("postText").value.trim();
+  const file = document.getElementById("postImage").files[0];
+
+  if (!file) {
+    alert("Спочатку вибери фотографію!");
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    alert("Будь ласка, вибери файл зображення.");
+    return;
+  }
+
+  if (file.size > 2 * 1024 * 1024) {
+    alert("Фото завелике. Вибери зображення до 2 МБ.");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function(event) {
+    posts.unshift({
+      id: Date.now(),
+      user: user,
+      avatar: "https://i.pravatar.cc/100?img=47",
+      image: event.target.result,
+      text: text || "Моя нова публікація 💜",
+      likes: 0,
+      liked: false,
+      comments: []
+    });
+
+    savePosts();
+    renderPosts();
+    closeModal();
+
+    document.getElementById("postUser").value = "";
+    document.getElementById("postText").value = "";
+    document.getElementById("postImage").value = "";
+  };
+
+  reader.readAsDataURL(file);
+}
+
+function searchPosts() {
+  const query = document.getElementById("search").value.toLowerCase().trim();
+
+  const filtered = posts.filter(post =>
+    post.user.toLowerCase().includes(query) ||
+    post.text.toLowerCase().includes(query)
+  );
+
+  renderPosts(filtered);
+}
+
+function showHome() {
+  document.getElementById("search").value = "";
+  renderPosts();
+}
+
+function showProfile() {
+  alert("Твій профіль VibeChat 💜\nТут відображаються твої публікації.");
+}
+
+renderPosts();
+</script>
+
+</body>
+</html>
